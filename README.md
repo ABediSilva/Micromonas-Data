@@ -1,12 +1,9 @@
 # Micromonas-Data
-This repository contains 1. plate reader data for Micromonas growth trials and 2. code used to analyze said data.
+This repository contains 1. plate reader data for Micromonas growth trials and 2. metadata for samples in each plate well and 3. R markdown files for analysis
 
-Two R markdown files are included in this release: 1) "May2018LightTrials.Rmd" and 2)"Sept2019LightTrials.Rmd"
-Each markdown files takes plate reader data, in the form of Raw Flourescence Units (RFUs), merges it with sample information, plots growth curves for each sample, and then feeds exponential phase growth rate information into a generalized linear mixed model (glmm).
+Each markdown file extracts RFU data from plate-reader generated files. The RFUs are than merged with sample metadata to create data frames used in downstream analysis. This ananlysis takes has three steps 1) generate growth curves for each cell line, 2)extract data to identify dates of exponential growth, 3) use exponential growth information to feed into a generalized linear mixed model.
 
-To run code in each markdown file, one will need 
-1) a folder of raw plate reader data found in the appropriately named repository 
-2) a folder contain sample metadata found in the appropriately named repository 
-3) files containing dates of exponential growth for both high and low light cultures
+To run each markdown, one will need a folder contain plate reader data, a folder contain metadata (i.e. cell line name, whether it is resistant/susceptible, etch) for each plate, and a .csv file containing dates of exponential growth for each cell line.
+
 
 
