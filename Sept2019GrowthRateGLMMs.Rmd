@@ -11,11 +11,11 @@ rm(list=ls())
 
 library(readxl)
 library(lubridate)
-setwd('/Users/nankabd/Library/CloudStorage/GoogleDrive-abedi@hawaii.edu/My Drive/MRLightTrialsMay2019/MRSRTrialSept2019/')
+setwd('')
 
-folders=list.files('/Users/nankabd/Library/CloudStorage/GoogleDrive-abedi@hawaii.edu/My Drive/MRLightTrialsMay2019/MRSRTrialSept2019/MRSRData', full.names=TRUE)
+folders=list.files('Sept2019GrowthExperimentData', full.names=TRUE)
 
-well.label.files=list.files('/Users/nankabd/Library/CloudStorage/GoogleDrive-abedi@hawaii.edu/My Drive/MRLightTrialsMay2019/MRSRTrialSept2019/MRSRLabels', full.names=TRUE)
+well.label.files=list.files('Sept2019Labels', full.names=TRUE)
 
 for (j in 1:length(folders)) {
   
@@ -134,7 +134,7 @@ Names.lo<-unique(lo.in$unique.ID)
 
 #####(Reading in exponential growth dates from curves) 
 ```{r, warning=FALSE, echo=FALSE, results='hide', fig.keep='none'}
-HiDates<-read.csv('/Users/nankabd/Google Drive/MRLightTrialsMay2019/MRSRTrialSept2019/HiMRSRDates.csv') 
+HiDates<-read.csv('HiMRSRDates.csv') 
 #Doesn't work for read_xlxs. Had to convert to .csv so that data would not be corrupted. 'read_xlx' doesn't seem to like NAs mixed in with dates.
 
 vec<-c(2:7)
@@ -147,7 +147,7 @@ hi5.dates<-data.frame("unique.ID"=HiDates$unique.ID,"start"=HiDates$T5.start,"en
 hi6.dates<-data.frame("unique.ID"=HiDates$unique.ID,"start"=HiDates$T6.start,"end"=HiDates$T6.end)
 
 
-LoDates<-read.csv('/Users/nankabd/Google Drive/MRLightTrialsMay2019/MRSRTrialSept2019/LoMRSRDates.csv')
+LoDates<-read.csv('LoMRSRDates.csv')
 
 vec<-c(2:9)
 for (i in vec){
