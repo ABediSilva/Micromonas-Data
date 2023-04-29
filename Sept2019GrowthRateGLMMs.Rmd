@@ -1,0 +1,289 @@
+---
+title: "Sept2019 Growth Rate Experiments"
+author: "Anamica Bedi de Silva"
+output: html_document
+---
+
+####Reading in and Shaping Plate Reader Data
+```{r, warning=FALSE, echo=FALSE}
+
+rm(list=ls())
+
+library(readxl)
+library(lubridate)
+setwd('/Users/nankabd/Library/CloudStorage/GoogleDrive-abedi@hawaii.edu/My Drive/MRLightTrialsMay2019/MRSRTrialSept2019/')
+
+folders=list.files('/Users/nankabd/Library/CloudStorage/GoogleDrive-abedi@hawaii.edu/My Drive/MRLightTrialsMay2019/MRSRTrialSept2019/MRSRData', full.names=TRUE)
+
+well.label.files=list.files('/Users/nankabd/Library/CloudStorage/GoogleDrive-abedi@hawaii.edu/My Drive/MRLightTrialsMay2019/MRSRTrialSept2019/MRSRLabels', full.names=TRUE)
+
+for (j in 1:length(folders)) {
+  
+  files = list.files(folders[j])
+  setwd(folders[j])
+  well.labels = read_xlsx(well.label.files[j])
+  
+  for (i in 1:length(files)) {
+    
+    datanow = read_xlsx(files[i], range = 'B52:G55', col_names = FALSE)
+    
+    data.date = as_datetime(as.character(read_excel(files[i], range = 'E48', col_names = FALSE)), tz="HST")
+    
+    well.labels$RFU = as.vector(t(as.matrix(datanow[,])))
+    well.labels$date = data.date
+    
+    if (i == 1) plate.timeseries = well.labels
+    if (i > 1) plate.timeseries = rbind(plate.timeseries, well.labels)
+    
+  }
+  
+  if (j == 1) db.whole = plate.timeseries
+  if (j > 1) db.whole = rbind(db.whole, plate.timeseries)
+  
+}
+
+db<-db.whole[!(db.whole$RFU=="OVER"),]
+#db<-na.omit(db)
+db$RFU<-as.numeric(db$RFU)
+db$short.date<-substr(db$date, 1,10)
+db$short.date<-ymd(db$short.date, tz="HST")
+db$light<-substr(db$Plate, 1, 2)
+
+db<-db[with(db, order(date)),] 
+
+db$unique.ID<-paste(db$Plate, db$SampleID)
+db$SROriginCross<-paste(db$Host, db$SROriginVirus)
+db$Cross.Suscpetibility<-paste(db$SROriginCross, db$Infectivity)
+```
+
+#####High Light Growth Curves
+```{r, warning=FALSE, echo=FALSE, results='hide', fig.keep='none'}
+
+##convert `short.date` to a date class
+high<-subset(db, light=="Hi")
+days<-unique(high$short.date)
+for (i in 1:length(days)){
+  dates<-subset(high, short.date==days[i])
+  blanks<-subset(dates, Host=="blank")
+  blanks<-subset(blanks, !(RFU>20))
+  mean.b<-mean(blanks$RFU)
+  high$bRFU<-(high$RFU-mean.b)
+}
+
+high<-subset(high, !(bRFU<=0))
+    hiT1<-subset(high, Transfer=="T1")
+    hiT2<-subset(high, Transfer=="T2")
+    hiT3<-subset(high, Transfer=="T3")
+    hiT4<-subset(high, Transfer=="T4")
+    hiT5<-subset(high, Transfer=="T5")
+    hiT6<-subset(high, Transfer=="T6")
+
+hi.in<-rbind(hiT4,hiT5, hiT6)
+    
+par(mfrow=c(4,3), mar=c(4,3,1,0))
+
+Names.hi<-unique(hi.in$unique.ID)
+  for(i in 1:length(Names.hi)){
+    sub.samp<-subset(hi.in, unique.ID==Names.hi[i])
+    wk<-unique(sub.samp$Transfer)
+    
+        for(j in 1:length(wk)){
+        sub.week<-subset(sub.samp, Transfer==wk[j])
+        plot(bRFU~short.date, sub.week, type='b', main=paste(Names.hi[i], wk[j]), las=2, log='y', cex.main=.95)
+        }
+}
+#Common error: "no non-missing arguments to min; returning Infno non-missing arguments to max; returning -Infno non-missing arguments to min; returning Infno non-missing arguments to max; returning -InfError in plot.window(...) : need finite 'xlim' values" Check to see that the data frams involved in loops actually have data in them. 
+
+```
+
+#####(Low Light Growth Curves)
+```{r, warning=FALSE, echo=FALSE, results='hide', fig.keep='none'}
+
+##convert `short.date` to a date class
+low<-subset(db, light=="Lo")
+days<-unique(low$short.date)
+for (i in 1:length(days)){
+  dates<-subset(low, short.date==days[i])
+  blanks<-subset(dates, Host=="blank")
+  blanks<-subset(blanks, !(RFU>20))
+  mean.b<-mean(blanks$RFU)
+  low$bRFU<-(low$RFU-mean.b)
+}
+
+low<-subset(low, !(bRFU<=0))
+    loT1<-subset(low, Transfer=="T1")
+    loT2<-subset(low, Transfer=="T2")
+    loT3<-subset(low, Transfer=="T3")
+    loT4<-subset(low, Transfer=="T4")
+ 
+
+lo.in<-rbind(loT1, loT2, loT3, loT4)
+    
+par(mfrow=c(4,4), mar=c(4,3,1,0))
+
+Names.lo<-unique(lo.in$unique.ID)
+  for(i in 1:length(Names.lo)){
+    sub.samp<-subset(lo.in, unique.ID==Names.lo[i])
+     wk<-unique(sub.samp$Transfer)
+        for(j in 1:length(wk)){
+        sub.week<-subset(sub.samp, Transfer==wk[j])
+        plot(bRFU~short.date, sub.week, type='b', main=paste(Names.lo[i], wk[j]), las=2, log='y')
+        }
+      }
+```
+
+#####(Reading in exponential growth dates from curves) 
+```{r, warning=FALSE, echo=FALSE, results='hide', fig.keep='none'}
+HiDates<-read.csv('/Users/nankabd/Google Drive/MRLightTrialsMay2019/MRSRTrialSept2019/HiMRSRDates.csv') 
+#Doesn't work for read_xlxs. Had to convert to .csv so that data would not be corrupted. 'read_xlx' doesn't seem to like NAs mixed in with dates.
+
+vec<-c(2:7)
+for (i in vec){
+  HiDates[,i]<-mdy(HiDates[,i])
+}
+
+hi4.dates<-data.frame("unique.ID"=HiDates$unique.ID,"start"=HiDates$T4.start,"end"=HiDates$T4.end)
+hi5.dates<-data.frame("unique.ID"=HiDates$unique.ID,"start"=HiDates$T5.start,"end"=HiDates$T5.end)
+hi6.dates<-data.frame("unique.ID"=HiDates$unique.ID,"start"=HiDates$T6.start,"end"=HiDates$T6.end)
+
+
+LoDates<-read.csv('/Users/nankabd/Google Drive/MRLightTrialsMay2019/MRSRTrialSept2019/LoMRSRDates.csv')
+
+vec<-c(2:9)
+for (i in vec){
+  LoDates[,i]<-mdy(LoDates[,i])
+}
+
+lo1.dates<-data.frame("unique.ID"=LoDates$unique.ID,"start"=LoDates$T1.start,"end"=LoDates$T1.end)
+lo2.dates<-data.frame("unique.ID"=LoDates$unique.ID,"start"=LoDates$T2.start,"end"=LoDates$T2.end)
+lo3.dates<-data.frame("unique.ID"=LoDates$unique.ID,"start"=LoDates$T3.start,"end"=LoDates$T3.end)
+lo4.dates<-data.frame("unique.ID"=LoDates$unique.ID,"start"=LoDates$T4.start,"end"=LoDates$T4.end)
+```
+
+#####Regression and data frame function    
+```{r, echo=F, warning=F, tidy=TRUE}
+merge.reg<-function(x, y){   
+#x is data frame containing information from one particualr transfer, e.g. HiT4, LoT2, etc. y is data frame containing select dates, eg. hi4.dates, lo1.dates, etc.
+
+par(mfrow=c(4,3), mar=c(4,3,1,0))
+
+reg<-vector()
+cell.line<-vector()
+unique.ID<-vector() 
+host<-vector()
+origin.cross<-vector()
+origin.virus<-vector()
+susceptibility<-vector()
+cross.sus<-vector()
+light<-vector() 
+transfer<-vector()  
+plate<-vector() 
+max.rfu<-vector()
+
+Names<-unique(x$unique.ID) 
+
+
+for(i in 1:length(Names)){
+  sub.samp<-subset(x, unique.ID==Names[i])
+  sub.samp<-merge(sub.samp, y)
+  
+  if (is.na(sub.samp$start[1])) next
+  
+  sub.date<-subset(sub.samp, sub.samp$start <= sub.samp$short.date & sub.samp$short.date<=sub.samp$end)
+  
+  #sub.date<-sub.date[with(sub.date, order(short.date)),] 
+  
+  plot(bRFU~short.date, sub.date, type='b', main=Names[i], las=2, log='y') 
+  
+  reg[i]<-coef(lm(log(bRFU) ~ date, sub.date))[2]
+  cell.line[i]<-as.character(sub.date$SampleID[1])
+  unique.ID[i]<-as.character(sub.date$unique.ID[1])
+  host[i]<-as.character(sub.date$Host[1])
+  origin.cross[i]<-as.character(sub.date$SROriginCross[1])
+  origin.virus[i]<-as.character(sub.date$SROriginVirus[1])
+  susceptibility[i]<-as.character(sub.date$Infectivity[1])
+  cross.sus[i]<-as.character(sub.date$Cross.Suscpetibility[1])
+  light[i]<-as.character(sub.date$light[1])
+  transfer[i]<-as.character(sub.date$Transfer[1])
+  plate[i]<-as.character(sub.date$Plate[1])
+  max.rfu[i]<-max(sub.date$bRFU)
+}
+reg<-reg*(24*3600)  
+reg.df<-data.frame(reg,unique.ID,cell.line,host,origin.virus,origin.cross,susceptibility,cross.sus,light,transfer,plate,max.rfu)  
+return(reg.df)
+}
+```
+
+#####Merging regression information
+```{r, warning=FALSE, echo=FALSE, results='hide', fig.keep='none'}
+hiT4.reg<-merge.reg(hiT4,hi4.dates)
+hiT5.reg<-merge.reg(hiT5,hi5.dates)
+hiT6.reg<-merge.reg(hiT6,hi6.dates)
+hi.reg<-rbind(hiT4.reg, hiT5.reg, hiT6.reg)
+
+loT1.reg<-merge.reg(loT1,lo1.dates)
+loT2.reg<-merge.reg(loT2,lo2.dates)
+loT3.reg<-merge.reg(loT3,lo3.dates)
+loT4.reg<-merge.reg(loT4,lo4.dates)
+lo.reg<-rbind(loT1.reg, loT2.reg, loT3.reg, loT4.reg)
+
+all.reg<-rbind(hi.reg, lo.reg)
+```
+
+#Some data shaping to prep for GLMM
+```{r, warning=F, echo=F}
+no.blanks<-subset(all.reg, unique.ID!="blank") 
+no.blanks<-na.omit(no.blanks)
+no.blanks$unique.ID<-no.blanks$unique.ID[,drop=T]
+
+x.13<-c("FL13 N/A MR","FL13 22v SR", "FL13 22v MR", "FL13 28v SR", "FL13 28v MR") #"FL13 N/A Per"
+x.42<-c("FL42 N/A MR", "FL42 22v SR", "FL42 22v MR","FL42 28v MR", "FL42 28v MR", "FL42 42v SR","FL42 42v MR")  #"FL42 N/A Per"           
+
+x.all<-c("FL13 N/A MR","FL13 22v SR", "FL13 22v MR", "FL13 28v SR", "FL13 28v MR", "FL42 N/A MR", "FL42 22v SR", "FL42 22v MR","FL42 28v MR", "FL42 28v MR", "FL42 42v SR","FL42 42v MR")
+```
+
+#Running GLMM for FL13 and then FL42 lines
+```{r}
+##Main data frame, including high and low light
+big.buddy = subset(no.blanks, origin.cross %in% x.13)
+
+##Main model
+tmb.mod = glmmTMB(slope ~ resist*light + (1|plate.name) + (1|isolate), dispformula =~ resist, data=big.buddy)
+
+##Submodels
+tmb.noint  = glmmTMB(slope ~ resist + light + (1|plate.name) + (1|isolate), dispformula =~ resist, data=big.buddy)
+
+anova(tmb.mod, tmb.noint)
+
+big.hi<-subset(big.buddy, light==("high"))
+tmb.hi<-glmmTMB(slope~resist + (1|plate.name) + (1|isolate),dispformula =~ resist, data=big.hi)
+hi.ran<-glmmTMB(slope~ 1 + (1|plate.name) + (1|isolate), dispformula =~ resist, data=big.hi)
+anova(tmb.hi, hi.ran)
+
+big.lo<-subset(big.buddy, light==("low"))
+tmb.lo<-glmmTMB(slope~resist + (1|plate.name) + (1|isolate),dispformula =~ resist, data=big.lo)
+lo.ran<-glmmTMB(slope~1 + (1|plate.name) + (1|isolate), dispformula =~ resist, data=big.lo)
+anova(tmb.lo, lo.ran)
+
+##Main data frame, including high and low light
+big.buddy = subset(no.blanks, origin.cross %in% x.42)
+
+##Main model
+tmb.mod = glmmTMB(slope ~ resist*light + (1|plate.name) + (1|isolate), dispformula =~ resist, data=big.buddy)
+
+##Submodels
+tmb.noint  = glmmTMB(slope ~ resist + light + (1|plate.name) + (1|isolate), dispformula =~ resist, data=big.buddy)
+
+anova(tmb.mod, tmb.noint)
+
+big.hi<-subset(big.buddy, light==("high"))
+tmb.hi<-glmmTMB(slope~resist + (1|plate.name) + (1|isolate),dispformula =~ resist, data=big.hi)
+hi.ran<-glmmTMB(slope~ 1 + (1|plate.name) + (1|isolate), dispformula =~ resist, data=big.hi)
+anova(tmb.hi, hi.ran)
+
+big.lo<-subset(big.buddy, light==("low"))
+tmb.lo<-glmmTMB(slope~resist + (1|plate.name) + (1|isolate),dispformula =~ resist, data=big.lo)
+lo.ran<-glmmTMB(slope~1 + (1|plate.name) + (1|isolate), dispformula =~ resist, data=big.lo)
+anova(tmb.lo, lo.ran)
+
+```
