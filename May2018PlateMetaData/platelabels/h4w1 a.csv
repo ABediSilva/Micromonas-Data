@@ -1,0 +1,25 @@
+﻿Plate,Well,WellID,SampleID,Host,Virus,Cross,Dilution,Letter Code,Resistance,Light,Week,Date of Last Transfer
+hi4a,A1,P4A1,4228v102xD,FL42,28v,FL42x28v,10^2x,D,resistant,high,w1,5/22/18
+hi4a,A2,P4A2,13s1xD,FL13,NA,FL13s,1x,D,susceptible,high,w1,5/22/18
+hi4a,A3,P4A3,42s102xC,FL42,NA,FL42s,10^2x,C,susceptible,high,w1,5/22/18
+hi4a,A4,P4A4,blank,blank,blank,blank,blank,blank,blank,high,w1,5/22/18
+hi4a,A5,P4A5,4222v10xD,FL42,22v,FL42x22v,10x,D,resistant,high,w1,5/22/18
+hi4a,A6,P4A6,4242v103xC,FL42,42v,FL42x42v,10^3x,C,resistant,high,w1,5/22/18
+hi4a,B1,P4B1,4242v1xC,FL42,42v,FL42x42v,1x,C,resistant,high,w1,5/22/18
+hi4a,B2,P4B2,4228v10xC,FL42,28v,FL42x28v,10x,C,resistant,high,w1,5/22/18
+hi4a,B3,P4B3,4228v1xD,FL42,28v,FL42x28v,1x,D,resistant,high,w1,5/22/18
+hi4a,B4,P4B4,13131xD,FL13,13v,FL13x13v,1x,D,resistant,high,w1,5/22/18
+hi4a,B5,P4B5,1322v103xC,FL13,22v,FL13x22v,10^3x,C,resistant,high,w1,5/22/18
+hi4a,B6,P4B6,42s103xC,FL42,NA,FL42s,10^3x,C,susceptible,high,w1,5/22/18
+hi4a,C1,P4C1,4222v103xD,FL42,22v,FL42x22v,10^3x,D,resistant,high,w1,5/22/18
+hi4a,C2,P4C2,13s103xD,FL13,NA,FL13s,10^3x,D,susceptible,high,w1,5/22/18
+hi4a,C3,P4C3,1313v102xA,FL13,13v,FL13x13v,10^2x,A,resistant,high,w1,5/22/18
+hi4a,C4,P4C4,1322v10xB,FL13,22v,FL13x22v,10x,B,resistant,high,w1,5/22/18
+hi4a,C5,P4C5,42s103xB,FL42,NA,FL42s,10^3x,B,susceptible,high,w1,5/22/18
+hi4a,C6,P4C6,4228v10xCb,FL42,28v,FL42x28v,10x,C,resistant,high,w1,5/22/18
+hi4a,D1,P4D1,13s102xD,FL13,NA,FL13s,10^2x,D,susceptible,high,w1,5/22/18
+hi4a,D2,P4D2,13s10xD,FL13,NA,FL13s,10x,D,susceptible,high,w1,5/22/18
+hi4a,D3,P4D3,42s1xC,FL42,NA,FL42s,1x,C,susceptible,high,w1,5/22/18
+hi4a,D4,P4D4,1322v102xC,FL13,22v,FL13x22v,10^2x,C,resistant,high,w1,5/22/18
+hi4a,D5,P4D5,4228v1xC,FL42,28v,FL42x28v,1x,C,resistant,high,w1,5/22/18
+hi4a,D6,P4D6,13s1xC,FL13,NA,FL13s,1x,C,susceptible,high,w1,5/22/18
