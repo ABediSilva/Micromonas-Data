@@ -11,12 +11,12 @@ rm(list=ls())
 
 library(readxl)
 library(lubridate)
-setwd('/Users/nankabd/Library/CloudStorage/GoogleDrive-abedi@hawaii.edu/My Drive/May2018LightExperiments')
+setwd('')
 #Raw plate reader data containing RFU for wells in each Micromonas culturing plate
-folders=list.files('/Users/nankabd/Library/CloudStorage/GoogleDrive-abedi@hawaii.edu/My Drive/May2018LightExperiments', full.names=TRUE) 
+folders=list.files('May2018PlateReaderData', full.names=TRUE) 
 
 #Labels containing sample information (isolate identity, light condition, transfer #, etc.) for each well of each plate
-well.label.files=list.files('/Users/nankabd/Library/CloudStorage/GoogleDrive-abedi@hawaii.edu/My Drive/May2018LightExperimentInfo', full.names=TRUE)
+well.label.files=list.files('May2018PlateMetaData/platelabels', full.names=TRUE)
 
 #Merge plate reader date with sample information
 for (j in 1:length(folders)) {
