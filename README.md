@@ -1,4 +1,4 @@
-##ReadMe Micromonas-Data
+#Micromonas-Data
 
 This repository contains plate reader data for Micromonas growth trials, metadata for samples in each plate well, R markdown files for analysis. This data contained in this repository is associated with the study “Resisting viral infection leads to transient, light-dependent fitness costs in a microalga.”
 
