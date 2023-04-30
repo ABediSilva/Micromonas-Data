@@ -84,7 +84,7 @@ for (i in 1:length(days)){
 high<-subset(high, !(bRFU<=0)) 
 
 #Reading in data with dates for exponential phase growth
-hi.dates<-read.csv('hidatelist.csv') #dates of exponential growth for each curve
+hi.dates<-read.csv('May2018PlateMetaData/hidatelist.csv') #dates of exponential growth for each curve
 
 #Subset of reading from second transfer. If you don't change to HST then it's in universal time is used and that's a mess
 hi.dates$T2.start<-mdy(hi.dates$T2.start, tz="HST") 
@@ -119,7 +119,7 @@ for (i in 1:length(days)){
 
 low<-subset(low, !(bRFU<=0))
 
-lo.dates<-read.csv('lodatelist.csv')
+lo.dates<-read.csv('May2018PlateMetaData/lodatelist.csv')
 
 lo.dates$T2.start<-mdy(lo.dates$start.T2, tz="HST")
 lo.dates$T2.end<-mdy(lo.dates$end.T2, tz="HST")
