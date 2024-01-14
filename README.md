@@ -23,4 +23,5 @@ Phenotype equivalents S= Per (susceptible descendants) Res = SR (resistant to on
 Each growth experiment used replicate plates grown at either high or low light. Directory and file names concatenate light level (hi or lo), plate number (plate 1, 2, 3, etc.), a letter indicating which replicate (a, b), and the number of transfer (often corresponds since week since start of experiment; T1, T2, T3).
 An example of a plate label is ‘Hi1aT2’, indicate plate 1, replicate a grown in high light after its first transfer.
 
+![image](https://github.com/ABediSilva/Micromonas-Data/assets/43560811/7fd78436-157b-4047-a861-eac4e4423972)
 
