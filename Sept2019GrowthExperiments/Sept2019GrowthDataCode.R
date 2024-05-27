@@ -13,7 +13,7 @@ library(effects)
 library(stringr)
 
 #set working directory
-setwd('/Users/nankabd/Desktop/September2019GrowthAssays/')
+setwd('')
 
 #read in plate reader data and isolate metadata
 db<-read.csv('Sept2019GrowthData.csv')
